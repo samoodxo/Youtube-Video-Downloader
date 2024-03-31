@@ -25,22 +25,62 @@ Url_Textbox.pack()
 #Download Button & Function
 def download_video_thread():
     def download_video():
-        try:
-            link = yt.YouTube(Url_Textbox.get("1.0", "end-1c"))
-            res = link.streams.get_highest_resolution()
-            res.download("Downloaded Videos")
-        except:
-            Download_Status_Var.set("Download Status: Error")
-        Download_Status_Var.set("Download Status: Complete!")
+        if mp3var.get() == "on" and mp4var.get() == "on":
+            try:
+                link = yt.YouTube(Url_Textbox.get("1.0", "end-1c"))
+                audio = link.streams.get_audio_only()
+                audio.download("Downloaded Videos And Audios",filename=f"{link.title}.mp3")
+                video = link.streams.get_highest_resolution()
+                video.download("Downloaded Videos And Audios")
+                Download_Status_Var.set("Download Status: Audio and Video Downloaded!")
+            except:
+                Download_Status_Var.set("Download Status: Error")
+        elif mp4var.get() == "on":
+            try:
+                link = yt.YouTube(Url_Textbox.get("1.0", "end-1c"))
+                vid = link.streams.get_highest_resolution()
+                vid.download("Downloaded Videos And Audios")
+                Download_Status_Var.set("Download Status: Video Downloaded!")
+            except:
+                Download_Status_Var.set("Download Status: Error")
+        elif mp3var.get() == "on":
+            try:
+                link = yt.YouTube(Url_Textbox.get("1.0", "end-1c"))
+                audio = link.streams.get_audio_only()
+                audio.download("Downloaded Videos And Audios",filename=f"{link.title}.mp3")
+                Download_Status_Var.set("Download Status: Audio Downloaded!")
+            except:
+                Download_Status_Var.set("Download Status: Error")
+        
 
     download_thread = threading.Thread(target=download_video)
     download_thread.start()
 
-    
 
+def Clear_buttons():
+    mpeg_3_checkbox.deselect()
+    mpeg_4_checkbox.deselect()
+
+
+#Filetypes
+mp4var = ctk.StringVar(value="off")
+mp3var = ctk.StringVar(value="off")
+
+mpeg_3_checkbox = ctk.CTkCheckBox(Window,text="MP3",variable=mp3var,onvalue="on",offvalue="off",border_width=2,font=("inter",12))
+mpeg_3_checkbox.pack(pady=15)
+
+mpeg_4_checkbox = ctk.CTkCheckBox(Window,text="MP4",variable=mp4var,onvalue="on",offvalue="off",border_width=2,font=("inter",12))
+mpeg_4_checkbox.pack(pady=10)
+
+#Download Button
 Download_Button = ctk.CTkButton(Window,text="Download Video",fg_color="red",hover=False,command=download_video_thread)
 Download_Button.configure(cursor="hand2")
 Download_Button.pack(pady=20)
+
+#Clear Checkbox Button
+Clear_Button = ctk.CTkButton(Window,text="Clear Checkbox",fg_color="red",hover=False,command=Clear_buttons)
+Clear_Button.configure(cursor="hand2")
+Clear_Button.pack(pady=2)
 
 
 #Download Status
@@ -63,7 +103,7 @@ Title_Label.pack()
 
 def update_title(event=None):
     url = Url_Textbox.get("1.0", "end-1c")
-    if url.startswith("https://www.youtube.com/watch?v="):
+    if url.startswith("https://www.youtube.com/watch?v=" or "https://youtu.be/" or "https://www.youtube.com/shorts/"):
         Download_Status_Var.set("Download Status: ")
         try:
             link = yt.YouTube(url)
@@ -83,7 +123,7 @@ Channel_Name_Label.pack()
 
 def channel_name(event=None):
     url = Url_Textbox.get("1.0", "end-1c")
-    if url.startswith("https://www.youtube.com/watch?v="):
+    if url.startswith("https://www.youtube.com/watch?v=" or "https://youtu.be/" or "https://www.youtube.com/shorts/"):
         try:
             link = yt.YouTube(url)
             channel = link.author
@@ -101,7 +141,7 @@ Video_Length_Label.pack()
 
 def video_length(event=None):
     url = Url_Textbox.get("1.0", "end-1c")
-    if url.startswith("https://www.youtube.com/watch?v="):
+    if url.startswith("https://www.youtube.com/watch?v=" or "https://youtu.be/" or "https://www.youtube.com/shorts/"):
         try:
             link = yt.YouTube(url)
             vid_len = link.length
@@ -115,7 +155,6 @@ def video_length(event=None):
             Video_Length_Var.set("Error fetching video")
     else:
         Video_Length_Var.set("Error fetching video")
-
 
 #Update Title Function Bind
 Url_Textbox.bind("<KeyRelease>", update_title)
