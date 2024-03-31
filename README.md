@@ -2,6 +2,12 @@
 
 A simple video downloader built using custom tkinter and pytube libraries. Downloaded videos will be saved in the "Downloaded Videos" folder. Provides information about the video name, channel name, and duration.
 
+## Before Use
+
+Make sure to install customtkinter and pytube
+
+These can be installed by pip install pytube and pip install customtkinter==0.3 
+
 ## How to Use:
 
 1. **Open the Program**
